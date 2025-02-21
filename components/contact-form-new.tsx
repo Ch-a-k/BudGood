@@ -25,7 +25,7 @@ export default function ContactFormNew() {
   const onSubmit = async (values: z.infer<typeof contactFormSchema>) => {
     try {
       setIsSubmitting(true);
-      const response = await fetch('/api/telegram.ts', {
+      const response = await fetch('/api/telegram', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
