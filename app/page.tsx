@@ -67,24 +67,30 @@ export default function Home() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
         },
-        body: JSON.stringify(data),
-        cache: 'no-store'
+        body: JSON.stringify({
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          message: data.message,
+        }),
       });
+
+      if (!response.ok) {
+        throw new Error('Failed to send message');
+      }
 
       const result = await response.json();
 
-      if (!response.ok) {
+      if (result.success) {
+        toast({
+          title: 'Wiadomość wysłana',
+          description: 'Dziękujemy za kontakt. Odpowiemy najszybciej jak to możliwe.',
+        });
+        reset();
+      } else {
         throw new Error(result.error || 'Failed to send message');
       }
-
-      toast({
-        title: 'Wiadomość wysłana',
-        description: 'Dziękujemy za kontakt. Odpowiemy najszybciej jak to możliwe.',
-      });
-
-      reset();
     } catch (error: any) {
       console.error('Error:', error);
       toast({
@@ -692,12 +698,16 @@ export default function Home() {
               </div>
             </FadeInSection>
             <FadeInSection>
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <form 
+                onSubmit={handleSubmit(onSubmit)} 
+                className="space-y-4"
+              >
                 <div>
                   <Input
                     placeholder="Imię i nazwisko"
                     {...register('name')}
                     aria-label="Imię i nazwisko"
+                    required
                   />
                   {errors.name && (
                     <p className="text-sm text-destructive mt-1">{errors.name.message}</p>
@@ -709,6 +719,7 @@ export default function Home() {
                     placeholder="Email"
                     {...register('email')}
                     aria-label="Email"
+                    required
                   />
                   {errors.email && (
                     <p className="text-sm text-destructive mt-1">{errors.email.message}</p>
@@ -720,6 +731,7 @@ export default function Home() {
                     placeholder="Telefon"
                     {...register('phone')}
                     aria-label="Telefon"
+                    required
                   />
                   {errors.phone && (
                     <p className="text-sm text-destructive mt-1">{errors.phone.message}</p>
@@ -730,12 +742,17 @@ export default function Home() {
                     placeholder="Wiadomość"
                     {...register('message')}
                     aria-label="Wiadomość"
+                    required
                   />
                   {errors.message && (
                     <p className="text-sm text-destructive mt-1">{errors.message.message}</p>
                   )}
                 </div>
-                <Button type="submit" className="w-full bg-white text-black hover:bg-[#072623] hover:text-white" size="lg">
+                <Button 
+                  type="submit" 
+                  className="w-full bg-white text-black hover:bg-[#072623] hover:text-white" 
+                  size="lg"
+                >
                   Wyślij wiadomość
                 </Button>
               </form>
