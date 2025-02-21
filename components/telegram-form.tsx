@@ -25,8 +25,11 @@ export function TelegramForm() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(userInput),
-        cache: 'no-store'
+        body: JSON.stringify({
+          name: userInput.name,
+          email: userInput.email,
+          message: userInput.message
+        })
       });
 
       if (response.ok) {

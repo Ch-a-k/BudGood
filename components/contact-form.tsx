@@ -28,12 +28,16 @@ function ContactForm() {
     try {
       console.log('Sending data:', data);
       const response = await fetch('/api/telegram', {
-        method: 'POST', // Явно указываем POST
+        method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
-        cache: 'no-store'
+        body: JSON.stringify({
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          message: data.message
+        })
       });
 
       console.log('Response status:', response.status);
@@ -47,10 +51,10 @@ function ContactForm() {
       const result = await response.json();
       console.log('Success result:', result);
       alert('Wiadomość wysłana pomyślnie!');
-      reset(); // Очищаем форму после успешной отправки
+      reset();
     } catch (error) {
       console.error('Error details:', error);
-      alert('Błąd podczas wysyłania wiadomości. Sprawdź konsolę po więcej szczegółów.');
+      alert('Nie udało się wysłać wiadomości. Spróbuj ponownie później.');
     }
   };
 
