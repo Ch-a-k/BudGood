@@ -13,21 +13,14 @@ export async function OPTIONS(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  // Add CORS headers to the response
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type',
-  };
-
   try {
     const data = await request.json();
     const { name, email, phone, message } = data;
 
     if (!name || !email || !phone || !message) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400, headers }
+        { error: 'Brak wymaganych pól' },
+        { status: 400 }
       );
     }
 
@@ -36,12 +29,18 @@ export async function POST(request: NextRequest) {
 
     if (!BOT_TOKEN || !CHAT_ID) {
       return NextResponse.json(
-        { error: 'Server configuration error' },
-        { status: 500, headers }
+        { error: 'Błąd konfiguracji serwera' },
+        { status: 500 }
       );
     }
 
-    const text = `New message from: ${name}\nEmail: ${email}\nPhone: ${phone}\nMessage: ${message}`.trim();
+    const text = `
+<b>Nowa wiadomość</b>
+<b>Imię:</b> ${name}
+<b>Email:</b> ${email}
+<b>Telefon:</b> ${phone}
+<b>Wiadomość:</b> ${message}
+    `.trim();
 
     const response = await fetch(
       `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
@@ -53,6 +52,7 @@ export async function POST(request: NextRequest) {
         body: JSON.stringify({
           chat_id: CHAT_ID,
           text: text,
+          parse_mode: 'HTML'
         }),
       }
     );
@@ -62,17 +62,17 @@ export async function POST(request: NextRequest) {
     if (!response.ok) {
       console.error('Telegram API error:', result);
       return NextResponse.json(
-        { error: 'Failed to send message' },
-        { status: 500, headers }
+        { error: 'Nie udało się wysłać wiadomości' },
+        { status: 500 }
       );
     }
 
-    return NextResponse.json({ success: true }, { headers });
+    return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error:', error);
     return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500, headers }
+      { error: 'Błąd wewnętrzny serwera' },
+      { status: 500 }
     );
   }
 }

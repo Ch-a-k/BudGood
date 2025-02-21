@@ -15,6 +15,7 @@ import { User } from 'lucide-react';
 import { ContactForm } from '@/components/contact-form';
 import { FadeInSection } from '@/components/fade-in-section';
 import { TelegramForm } from '@/components/telegram-form';
+import ContactFormNew from '@/components/contact-form-new';
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -594,7 +595,7 @@ export default function Home() {
       </section>
 
       {/* Contact Form Section */}
-      <ContactForm />
+      <ContactFormNew />
 
       {/* Telegram Form Section */}
       <TelegramForm />
