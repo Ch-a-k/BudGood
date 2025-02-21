@@ -7,6 +7,13 @@ import { Button } from '@/components/ui/button';
 import { FadeInSection } from '@/components/fade-in-section'; // Ваш компонент анимации
 import { Phone, MapPin } from 'lucide-react'; // Иконки
 
+interface FormData {
+  name: string;
+  email: string;
+  phone: string;
+  message: string;
+}
+
 export { ContactSection };
 
 function ContactSection() {
@@ -15,9 +22,9 @@ function ContactSection() {
     handleSubmit,
     formState: { errors },
     reset,
-  } = useForm();
+  } = useForm<FormData>();
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: FormData) => {
     try {
       const response = await fetch('/api/send-telegram', {
         method: 'POST', // Явно указываем POST
