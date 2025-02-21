@@ -16,6 +16,8 @@ import { useInView } from 'react-intersection-observer';
 import { useToast } from "@/components/ui/use-toast";
 import { Logo } from '@/components/logo';
 import cn from 'classnames';
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { User } from 'lucide-react';
 
 const formSchema = z.object({
   name: z.string().min(2, 'Imię jest za krótkie').max(50),
@@ -69,28 +71,23 @@ export default function Home() {
         body: JSON.stringify(data),
       });
 
-      const result = await response.json();
-
-      if (!response.ok || !result.success) {
-        throw new Error(result.error || 'Failed to send message');
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to send message');
       }
 
-      // Очищаем форму
-      reset();
-      
-      // Показываем уведомление об успехе
       toast({
-        title: "Dziękujemy!",
-        description: "Twoja wiadomość została wysłana. Skontaktujemy się z Tobą wkrótce.",
-        duration: 5000,
+        title: 'Wiadomość wysłana',
+        description: 'Dziękujemy za kontakt. Odpowiemy najszybciej jak to możliwe.',
       });
+
+      reset();
     } catch (error) {
       console.error('Error:', error);
       toast({
-        title: "Błąd",
-        description: "Nie udało się wysłać wiadomości. Spróbuj ponownie później.",
-        variant: "destructive",
-        duration: 5000,
+        title: 'Błąd',
+        description: 'Przepraszamy, nie udało się wysłać wiadomości. Spróbuj ponownie później.',
+        variant: 'destructive',
       });
     }
   };
@@ -103,6 +100,7 @@ export default function Home() {
     { href: '#about', label: 'O nas' },
     { href: '#services', label: 'Usługi' },
     { href: '#projects', label: 'Projekty' },
+    { href: '#faq', label: 'FAQ' },
     { href: '#reviews', label: 'Opinie' },
     { href: '#contact', label: 'Kontakt' },
   ];
@@ -352,7 +350,7 @@ export default function Home() {
             {[...Array(9)].map((_, index) => (
               <FadeInSection key={index}>
                 <div 
-                  className="relative h-[250px] rounded-lg overflow-hidden cursor-pointer"
+                  className="relative h-[250px] flex items-center justify-center"
                   onClick={() => setSelectedImage(index)}
                 >
                   <Image
@@ -394,42 +392,237 @@ export default function Home() {
         </div>
       )}
 
-      {/* Reviews Section */}
-      <section id="reviews" className="py-20 bg-[#FFFFFF]">
+      {/* FAQ Section */}
+      <section id="faq" className="py-20">
         <div className="container mx-auto px-4">
           <FadeInSection>
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Opinie klientów</h2>
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">Najczęściej zadawane pytania</h2>
+            <p className="text-gray-600 text-center mb-12 max-w-2xl mx-auto">
+              Odpowiedzi na pytania dotyczące remontów mieszkań, biur i lokali komercyjnych
+            </p>
           </FadeInSection>
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              {
-                name: 'Anna Kowalska',
-                text: 'Świetna firma, profesjonalne podejście i doskonałe wykonanie. Polecam!',
-                rating: 5,
-              },
-              {
-                name: 'Piotr Nowak',
-                text: 'Terminowo i solidnie. Ekipa godna polecenia.',
-                rating: 5,
-              },
-              {
-                name: 'Marta Wiśniewska',
-                text: 'Bardzo zadowolona z efektu końcowego. Dziękuję za profesjonalną obsługę.',
-                rating: 5,
-              },
-            ].map((review, index) => (
-              <FadeInSection key={index}>
-                <Card className="p-6">
-                  <div className="flex gap-1 mb-4">
-                    {Array(review.rating).fill(null).map((_, i) => (
-                      <Star key={i} className="h-5 w-5 fill-primary text-primary" />
-                    ))}
-                  </div>
-                  <p className="mb-4">{review.text}</p>
-                  <p className="font-semibold">{review.name}</p>
-                </Card>
-              </FadeInSection>
-            ))}
+          
+          {/* Schema.org FAQ микроразметка */}
+          <script type="application/ld+json" dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              "mainEntity": [
+                {
+                  "@type": "Question",
+                  "name": "Jakie usługi remontowe oferujecie?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Oferujemy kompleksowe usługi remontowe: remonty mieszkań pod klucz, modernizację biur, adaptację lokali użytkowych, wykończenia wnętrz, instalacje elektryczne i hydrauliczne, malowanie, układanie płytek, parkietów i paneli, montaż sufitów podwieszanych oraz prace wykończeniowe."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "Czy wykonujecie remonty w starym budownictwie?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Tak, specjalizujemy się w remontach zarówno nowych, jak i starych budynków. Mamy doświadczenie w renowacji kamienic, modernizacji instalacji w starym budownictwie oraz dostosowywaniu historycznych wnętrz do współczesnych standardów, z zachowaniem ich unikalnego charakteru."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "Jak wygląda proces realizacji remontu?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Proces rozpoczyna się od bezpłatnej konsultacji i wyceny. Następnie przygotowujemy szczegółowy projekt i harmonogram prac. Podczas remontu zapewniamy stały nadzór, regularne aktualizacje postępu prac oraz dbamy o zachowanie czystości. Każdy etap kończy się odbiorem częściowym."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "Czy pomagacie w wyborze materiałów wykończeniowych?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Tak, oferujemy profesjonalne doradztwo w zakresie doboru materiałów wykończeniowych. Współpracujemy z najlepszymi dostawcami w Polsce, co pozwala nam oferować wysokiej jakości materiały w konkurencyjnych cenach. Pomagamy w wyborze rozwiązań dopasowanych do budżetu i oczekiwań."
+                  }
+                },
+                {
+                  "@type": "Question",
+                  "name": "Czy zapewniacie gwarancję na wykonane prace remontowe?",
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": "Tak, na wszystkie wykonane przez nas prace remontowe udzielamy pełnej gwarancji. Pracujemy tylko z certyfikowanymi materiałami i doświadczonymi fachowcami. Zapewniamy również serwis pogwarancyjny i wsparcie techniczne po zakończeniu remontu."
+                  }
+                }
+              ]
+            })
+          }} />
+
+          <div className="max-w-4xl mx-auto">
+            <Accordion type="single" collapsible className="space-y-6">
+              <AccordionItem value="item-1" className="rounded-lg border border-gray-200 bg-white shadow-sm">
+                <AccordionTrigger className="px-6 text-lg font-medium hover:text-[#09403A]">
+                  Jakie usługi remontowe oferujecie?
+                </AccordionTrigger>
+                <AccordionContent className="px-6 text-gray-600">
+                  Oferujemy kompleksowe usługi remontowe: remonty mieszkań pod klucz, modernizację biur, 
+                  adaptację lokali użytkowych, wykończenia wnętrz, instalacje elektryczne i hydrauliczne, 
+                  malowanie, układanie płytek, parkietów i paneli, montaż sufitów podwieszanych oraz prace wykończeniowe.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-2" className="rounded-lg border border-gray-200 bg-white shadow-sm">
+                <AccordionTrigger className="px-6 text-lg font-medium hover:text-[#09403A]">
+                  Czy wykonujecie remonty w starym budownictwie?
+                </AccordionTrigger>
+                <AccordionContent className="px-6 text-gray-600">
+                  Tak, specjalizujemy się w remontach zarówno nowych, jak i starych budynków. Mamy doświadczenie 
+                  w renowacji kamienic, modernizacji instalacji w starym budownictwie oraz dostosowywaniu 
+                  historycznych wnętrz do współczesnych standardów, z zachowaniem ich unikalnego charakteru.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-3" className="rounded-lg border border-gray-200 bg-white shadow-sm">
+                <AccordionTrigger className="px-6 text-lg font-medium hover:text-[#09403A]">
+                  Jak wygląda proces realizacji remontu?
+                </AccordionTrigger>
+                <AccordionContent className="px-6 text-gray-600">
+                  Proces rozpoczyna się od bezpłatnej konsultacji i wyceny. Następnie przygotowujemy szczegółowy 
+                  projekt i harmonogram prac. Podczas remontu zapewniamy stały nadzór, regularne aktualizacje 
+                  postępu prac oraz dbamy o zachowanie czystości. Każdy etap kończy się odbiorem częściowym.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-4" className="rounded-lg border border-gray-200 bg-white shadow-sm">
+                <AccordionTrigger className="px-6 text-lg font-medium hover:text-[#09403A]">
+                  Czy pomagacie w wyborze materiałów wykończeniowych?
+                </AccordionTrigger>
+                <AccordionContent className="px-6 text-gray-600">
+                  Tak, oferujemy profesjonalne doradztwo w zakresie doboru materiałów wykończeniowych. 
+                  Współpracujemy z najlepszymi dostawcami w Polsce, co pozwala nam oferować wysokiej jakości 
+                  materiały w konkurencyjnych cenach. Pomagamy w wyborze rozwiązań dopasowanych do budżetu i oczekiwań.
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="item-5" className="rounded-lg border border-gray-200 bg-white shadow-sm">
+                <AccordionTrigger className="px-6 text-lg font-medium hover:text-[#09403A]">
+                  Czy zapewniacie gwarancję na wykonane prace remontowe?
+                </AccordionTrigger>
+                <AccordionContent className="px-6 text-gray-600">
+                  Tak, na wszystkie wykonane przez nas prace remontowe udzielamy pełnej gwarancji. Pracujemy 
+                  tylko z certyfikowanymi materiałami i doświadczonymi fachowcami. Zapewniamy również serwis 
+                  pogwarancyjny i wsparcie techniczne po zakończeniu remontu.
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+          </div>
+        </div>
+      </section>
+
+      {/* Reviews Section */}
+      <section id="reviews" className="py-20 overflow-hidden">
+        <div className="container mx-auto px-4">
+          <FadeInSection>
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-4">Opinie naszych klientów</h2>
+            <p className="text-gray-600 text-center mb-12">
+              Zobacz, co mówią o nas nasi klienci
+            </p>
+          </FadeInSection>
+
+          <div className="relative max-w-[1400px] mx-auto">
+            
+            
+            <div className="flex animate-scroll gap-6">
+              {[...Array(2)].map((_, index) => (
+                <div key={index} className="flex gap-6 shrink-0">
+                  <Card className="w-[350px] shrink-0 p-6 hover:border-primary/20 transition-colors">
+                    <div className="flex flex-col h-full">
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                          <User className="w-6 h-6 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-semibold">Anna Kowalska</p>
+                          <p className="text-sm text-gray-500">Remont mieszkania, Warszawa</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center mb-3">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className="w-5 h-5 text-[#09403A]" fill="currentColor" />
+                        ))}
+                      </div>
+                      <p className="text-gray-600 flex-grow">
+                        "Jestem bardzo zadowolona z usług tej firmy. Profesjonalne podejście, terminowość i dbałość o detale. 
+                        Remont został wykonany perfekcyjnie, a efekt końcowy przeszedł moje oczekiwania."
+                      </p>
+                    </div>
+                  </Card>
+
+                  <Card className="w-[350px] shrink-0 p-6 hover:border-primary/20 transition-colors">
+                    <div className="flex flex-col h-full">
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                          <User className="w-6 h-6 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-semibold">Piotr Nowak</p>
+                          <p className="text-sm text-gray-500">Remont biura, Kraków</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center mb-3">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className="w-5 h-5 text-[#09403A]" fill="currentColor" />
+                        ))}
+                      </div>
+                      <p className="text-gray-600 flex-grow">
+                        "Współpraca na najwyższym poziomie. Ekipa remontowa była bardzo kompetentna i pomocna. 
+                        Szczególnie doceniam doradztwo w wyborze materiałów i elastyczne podejście do zmian w projekcie."
+                      </p>
+                    </div>
+                  </Card>
+
+                  <Card className="w-[350px] shrink-0 p-6 hover:border-primary/20 transition-colors">
+                    <div className="flex flex-col h-full">
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                          <User className="w-6 h-6 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-semibold">Marek Wiśniewski</p>
+                          <p className="text-sm text-gray-500">Remont kuchni i łazienki, Gdańsk</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center mb-3">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className="w-5 h-5 text-[#09403A]" fill="currentColor" />
+                        ))}
+                      </div>
+                      <p className="text-gray-600 flex-grow">
+                        "Świetna firma remontowa! Terminowo wykonane prace, profesjonalna obsługa i konkurencyjne ceny. 
+                        Polecam każdemu, kto szuka solidnej ekipy remontowej."
+                      </p>
+                    </div>
+                  </Card>
+
+                  <Card className="w-[350px] shrink-0 p-6 hover:border-primary/20 transition-colors">
+                    <div className="flex flex-col h-full">
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                          <User className="w-6 h-6 text-primary" />
+                        </div>
+                        <div>
+                          <p className="font-semibold">Katarzyna Lewandowska</p>
+                          <p className="text-sm text-gray-500">Remont salonu, Wrocław</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center mb-3">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} className="w-5 h-5 text-[#09403A]" fill="currentColor" />
+                        ))}
+                      </div>
+                      <p className="text-gray-600 flex-grow">
+                        "Jestem pod wrażeniem jakości wykonanych prac. Ekipa była punktualna, czysta i bardzo dokładna. 
+                        Remont przebiegł sprawnie i bez żadnych problemów."
+                      </p>
+                    </div>
+                  </Card>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
