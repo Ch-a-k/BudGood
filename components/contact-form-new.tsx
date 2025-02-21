@@ -25,7 +25,7 @@ export default function ContactFormNew() {
   const onSubmit = async (values: z.infer<typeof contactFormSchema>) => {
     try {
       setIsSubmitting(true);
-      const response = await fetch('/api/telegram', {
+      const response = await fetch('/api/telegram.ts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -34,7 +34,8 @@ export default function ContactFormNew() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to send message');
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to send message');
       }
 
       setIsSubmitted(true);
@@ -42,7 +43,7 @@ export default function ContactFormNew() {
       form.reset();
     } catch (error) {
       console.error(error);
-      toast.error('Wystąpił błąd. Spróbuj ponownie później.');
+      toast.error(error instanceof Error ? error.message : 'Wystąpił błąd. Spróbuj ponownie później.');
     } finally {
       setIsSubmitting(false);
     }
