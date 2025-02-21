@@ -14,6 +14,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 import { User } from 'lucide-react';
 import { ContactForm } from '@/components/contact-form';
 import { FadeInSection } from '@/components/fade-in-section';
+import { TelegramForm } from '@/components/telegram-form';
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -594,6 +595,9 @@ export default function Home() {
 
       {/* Contact Form Section */}
       <ContactForm />
+
+      {/* Telegram Form Section */}
+      <TelegramForm />
 
       {/* Footer */}
       <footer className="bg-[#072623] text-white py-8">
