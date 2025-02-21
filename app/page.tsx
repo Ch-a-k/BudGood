@@ -2,104 +2,22 @@
 
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Building2, CheckCircle, Clock, HandshakeIcon, Heart, Home as HomeIcon, Mail, MapPin, Menu, Phone, Star, PenTool as Tool, Trophy, Users, X } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
 import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
-import { useToast } from "@/components/ui/use-toast";
 import { Logo } from '@/components/logo';
 import cn from 'classnames';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { User } from 'lucide-react';
-
-const formSchema = z.object({
-  name: z.string().min(2, 'Imię jest za krótkie').max(50),
-  email: z.string().email('Nieprawidłowy adres email'),
-  phone: z.string().regex(/^\+?[0-9]{9,12}$/, 'Nieprawidłowy numer telefonu'),
-  message: z.string().min(10, 'Wiadomość jest za krótka').max(500),
-});
-
-type FormData = z.infer<typeof formSchema>;
-
-const FadeInSection = ({ children, className }: { children: React.ReactNode; className?: string }) => {
-  const { ref, inView } = useInView({
-    triggerOnce: true,
-    threshold: 0.1,
-  });
-
-  return (
-    <div
-      ref={ref}
-      className={cn(
-        'transition-opacity duration-1000',
-        inView ? 'opacity-100' : 'opacity-0',
-        className
-      )}
-    >
-      {children}
-    </div>
-  );
-};
+import { ContactSection } from '@/components/contact-form';
+import { FadeInSection } from '@/components/fade-in-section';
 
 export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<number | null>(null);
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm<FormData>({
-    resolver: zodResolver(formSchema),
-  });
-  const { toast } = useToast();
-
-  const onSubmit = async (data: FormData) => {
-    try {
-      const response = await fetch('/api/send-telegram', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: data.name,
-          email: data.email,
-          phone: data.phone,
-          message: data.message,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to send message');
-      }
-
-      const result = await response.json();
-
-      if (result.success) {
-        toast({
-          title: 'Wiadomość wysłana',
-          description: 'Dziękujemy za kontakt. Odpowiemy najszybciej jak to możliwe.',
-        });
-        reset();
-      } else {
-        throw new Error(result.error || 'Failed to send message');
-      }
-    } catch (error: any) {
-      console.error('Error:', error);
-      toast({
-        title: 'Błąd',
-        description: error.message || 'Przepraszamy, nie udało się wysłać wiadomości. Spróbuj ponownie później.',
-        variant: 'destructive',
-      });
-    }
-  };
 
   const handleCallClick = () => {
     window.location.href = 'tel:+48222900004';
@@ -675,87 +593,7 @@ export default function Home() {
       </section>
 
       {/* Contact Form Section */}
-      <section id="contact" className="py-20 bg-[#09403A] text-white">
-  <div className="container mx-auto px-4">
-    <FadeInSection>
-      <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">Kontakt</h2>
-    </FadeInSection>
-    <div className="grid md:grid-cols-2 gap-8">
-      <FadeInSection>
-        <div>
-          <h3 className="text-2xl font-semibold mb-6">Dane kontaktowe</h3>
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <Phone className="text-primary" />
-              <a href="tel:+48222900004">+ 48 222 900 004</a>
-            </div>
-            <div className="flex items-center gap-3">
-              <MapPin className="text-primary" />
-              <span>al. Jana Pawła II 23, 01-031 Warszawa</span>
-            </div>
-          </div>
-        </div>
-      </FadeInSection>
-      <FadeInSection>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div>
-            <Input
-              placeholder="Imię i nazwisko"
-              {...register('name')}
-              aria-label="Imię i nazwisko"
-              required
-            />
-            {errors.name && (
-              <p className="text-sm text-destructive mt-1">{errors.name.message}</p>
-            )}
-          </div>
-          <div>
-            <Input
-              type="email"
-              placeholder="Email"
-              {...register('email')}
-              aria-label="Email"
-              required
-            />
-            {errors.email && (
-              <p className="text-sm text-destructive mt-1">{errors.email.message}</p>
-            )}
-          </div>
-          <div>
-            <Input
-              type="tel"
-              placeholder="Telefon"
-              {...register('phone')}
-              aria-label="Telefon"
-              required
-            />
-            {errors.phone && (
-              <p className="text-sm text-destructive mt-1">{errors.phone.message}</p>
-            )}
-          </div>
-          <div>
-            <Textarea
-              placeholder="Wiadomość"
-              {...register('message')}
-              aria-label="Wiadomość"
-              required
-            />
-            {errors.message && (
-              <p className="text-sm text-destructive mt-1">{errors.message.message}</p>
-            )}
-          </div>
-          <Button
-            type="submit"
-            className="w-full bg-white text-black hover:bg-[#072623] hover:text-white"
-            size="lg"
-          >
-            Wyślij wiadomość
-          </Button>
-        </form>
-      </FadeInSection>
-    </div>
-  </div>
-</section>
+      <ContactSection />
 
       {/* Footer */}
       <footer className="bg-[#072623] text-white py-8">
