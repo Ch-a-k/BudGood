@@ -1,11 +1,10 @@
 import { NextResponse } from 'next/server';
 import axios from 'axios';
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    const { name, email, message } = await req.json();
+    const { name, email, message } = await request.json();
 
-    // Replace with your actual bot token and chat ID
     const botToken = process.env.TELEGRAM_BOT_TOKEN;
     const chatId = process.env.TELEGRAM_CHAT_ID;
 
@@ -22,7 +21,6 @@ export async function POST(req: Request) {
       Message: ${message}
     `;
 
-    // Send the message via the Telegram Bot API
     const response = await axios.post(telegramUrl, {
       chat_id: chatId,
       text: text,

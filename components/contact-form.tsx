@@ -27,7 +27,7 @@ function ContactForm() {
   const onSubmit = async (data: FormData) => {
     try {
       console.log('Sending data:', data);
-      const response = await fetch('/api/send-telegram', {
+      const response = await fetch('/api/telegram', {
         method: 'POST', // Явно указываем POST
         headers: {
           'Content-Type': 'application/json',

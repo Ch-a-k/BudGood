@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 
-export async function POST(req: Request) {
+export async function POST(request: Request) {
   try {
-    const data = await req.json();
+    const data = await request.json();
     console.log('Received data:', data);
     
     const { name, email, phone, message } = data;
@@ -63,7 +63,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error in send-telegram route:', error);
+    console.error('Error in telegram route:', error);
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
