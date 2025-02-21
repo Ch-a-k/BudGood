@@ -410,11 +410,11 @@ function App() {
               <div className="space-y-2">
                 <p className="flex items-center">
                   <Phone className="w-5 h-5 mr-2" />
-                  <a href="tel:+48222900004" className="hover:text-primary transition-colors">+ 48 222 900 004</a>
+                  <a href="tel:+48222900004" className="hover:text-[#072623] transition-colors">+ 48 222 900 004</a>
                 </p>
                 <p className="flex items-center">
                   <Mail className="w-5 h-5 mr-2" />
-                  <a href="mailto:info@polerowanie-szyb.pl" className="hover:text-primary transition-colors">info@polerowanie-szyb.pl</a>
+                  <a href="mailto:info@polerowanie-szyb.pl" className="hover:text-[#072623] transition-colors">info@polerowanie-szyb.pl</a>
                 </p>
               </div>
             </div>

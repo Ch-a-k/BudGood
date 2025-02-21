@@ -615,7 +615,6 @@ export default function Home() {
               <h3 className="text-lg font-semibold mb-4">Szybki kontakt</h3>
               <div className="space-y-2">
                 <a href="tel:+48222900004">Tel: +48 222 900 004</a>
-                {/* <p>Email: kontakt@budgood.pl</p> */}
               </div>
             </div>
             <div>
