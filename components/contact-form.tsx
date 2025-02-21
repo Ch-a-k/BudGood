@@ -14,9 +14,9 @@ interface FormData {
   message: string;
 }
 
-export { ContactSection };
+export { ContactForm };
 
-function ContactSection() {
+function ContactForm() {
   const {
     register,
     handleSubmit,
@@ -26,6 +26,7 @@ function ContactSection() {
 
   const onSubmit = async (data: FormData) => {
     try {
+      console.log('Sending data:', data);
       const response = await fetch('/api/send-telegram', {
         method: 'POST', // Явно указываем POST
         headers: {
@@ -34,18 +35,21 @@ function ContactSection() {
         body: JSON.stringify(data),
       });
 
+      console.log('Response status:', response.status);
+      
       if (!response.ok) {
         const errorData = await response.json();
+        console.error('Error data:', errorData);
         throw new Error(errorData.error || 'Failed to send message');
       }
 
       const result = await response.json();
-      console.log('Success:', result);
+      console.log('Success result:', result);
       alert('Wiadomość wysłana pomyślnie!');
       reset(); // Очищаем форму после успешной отправки
     } catch (error) {
-      console.error('Error:', error);
-      alert('Błąd podczas wysyłania wiadomości.');
+      console.error('Error details:', error);
+      alert('Błąd podczas wysyłania wiadomości. Sprawdź konsolę po więcej szczegółów.');
     }
   };
 

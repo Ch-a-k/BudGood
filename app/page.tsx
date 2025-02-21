@@ -12,7 +12,7 @@ import { Logo } from '@/components/logo';
 import cn from 'classnames';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { User } from 'lucide-react';
-import { ContactSection } from '@/components/contact-form';
+import { ContactForm } from '@/components/contact-form';
 import { FadeInSection } from '@/components/fade-in-section';
 
 export default function Home() {
@@ -125,8 +125,8 @@ export default function Home() {
             <FadeInSection>
               <div className="relative h-[400px] flex items-center justify-center">
                 <Image
-                  src="https://images.unsplash.com/photo-1581858726788-75bc0f6a952d"
-                  alt="Remont wnętrza"
+                  src={`/images/about/about.jpg`}
+                  alt={`Remont wnętrza`}
                   fill
                   className="object-cover rounded-lg"
                   sizes="(max-width: 768px) 100vw, 50vw"
@@ -148,8 +148,8 @@ export default function Home() {
             <FadeInSection>
               <div className="relative h-[300px]">
                 <Image
-                  src="https://images.unsplash.com/photo-1504307651254-35680f356dfd"
-                  alt="Nasza firma"
+                  src={`/images/about/about.jpg`}
+                  alt={`Nasza firma`}
                   fill
                   className="object-cover rounded-lg"
                   sizes="(max-width: 768px) 100vw, 50vw"
@@ -593,7 +593,7 @@ export default function Home() {
       </section>
 
       {/* Contact Form Section */}
-      <ContactSection />
+      <ContactForm />
 
       {/* Footer */}
       <footer className="bg-[#072623] text-white py-8">
