@@ -33,6 +33,7 @@ function ContactForm() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
+        cache: 'no-store'
       });
 
       console.log('Response status:', response.status);

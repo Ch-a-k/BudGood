@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -21,16 +20,27 @@ export function TelegramForm() {
     e.preventDefault();
 
     try {
-      const response = await axios.post('/api/contact', userInput);
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userInput),
+        cache: 'no-store'
+      });
 
-      if (response.status === 200) {
-        toast.success('Message sent successfully!');
+      if (response.ok) {
+        const result = await response.json();
+        toast.success('Wiadomość wysłana pomyślnie!');
         setUserInput({ name: '', email: '', message: '' });
       } else {
-        toast.error('Failed to send message.');
+        const error = await response.json();
+        console.error('Error:', error);
+        toast.error(error.message || 'Nie udało się wysłać wiadomości.');
       }
     } catch (error) {
-      toast.error('Error sending message.');
+      console.error('Error:', error);
+      toast.error('Błąd podczas wysyłania wiadomości.');
     }
   };
 
