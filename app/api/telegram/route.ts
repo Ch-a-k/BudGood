@@ -1,8 +1,14 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 
-export async function POST(request: Request) {
+export const runtime = 'edge';
+
+export async function POST(req: NextRequest) {
+  if (req.method !== 'POST') {
+    return new NextResponse('Method Not Allowed', { status: 405 });
+  }
+
   try {
-    const data = await request.json();
+    const data = await req.json();
     console.log('Received data:', data);
     
     const { name, email, phone, message } = data;
