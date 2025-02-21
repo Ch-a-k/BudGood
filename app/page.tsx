@@ -67,13 +67,16 @@ export default function Home() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
         body: JSON.stringify(data),
+        cache: 'no-store'
       });
 
+      const result = await response.json();
+
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to send message');
+        throw new Error(result.error || 'Failed to send message');
       }
 
       toast({
@@ -82,11 +85,11 @@ export default function Home() {
       });
 
       reset();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error:', error);
       toast({
         title: 'Błąd',
-        description: 'Przepraszamy, nie udało się wysłać wiadomości. Spróbuj ponownie później.',
+        description: error.message || 'Przepraszamy, nie udało się wysłać wiadomości. Spróbuj ponownie później.',
         variant: 'destructive',
       });
     }

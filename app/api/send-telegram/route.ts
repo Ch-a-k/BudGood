@@ -43,6 +43,7 @@ export async function POST(req: Request) {
           chat_id: CHAT_ID,
           text,
         }),
+        cache: 'no-store'
       }
     );
 
@@ -50,12 +51,12 @@ export async function POST(req: Request) {
       const errorData = await telegramResponse.json();
       console.error('Telegram API error:', errorData);
       return NextResponse.json(
-        { error: 'Failed to send message' },
+        { error: 'Failed to send message to Telegram' },
         { status: 500 }
       );
     }
 
-    return NextResponse.json({ success: true });
+    return NextResponse.json({ success: true, message: 'Message sent successfully' });
   } catch (error) {
     console.error('Error processing request:', error);
     return NextResponse.json(
@@ -63,4 +64,33 @@ export async function POST(req: Request) {
       { status: 500 }
     );
   }
+}
+
+// Handle other HTTP methods
+export async function GET() {
+  return NextResponse.json(
+    { error: 'Method not allowed. Use POST instead.' },
+    { status: 405 }
+  );
+}
+
+export async function PUT() {
+  return NextResponse.json(
+    { error: 'Method not allowed. Use POST instead.' },
+    { status: 405 }
+  );
+}
+
+export async function DELETE() {
+  return NextResponse.json(
+    { error: 'Method not allowed. Use POST instead.' },
+    { status: 405 }
+  );
+}
+
+export async function PATCH() {
+  return NextResponse.json(
+    { error: 'Method not allowed. Use POST instead.' },
+    { status: 405 }
+  );
 }
