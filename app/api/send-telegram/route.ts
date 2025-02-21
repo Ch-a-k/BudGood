@@ -1,22 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
-const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
-
 export async function POST(req: Request) {
-  console.log('API route called');
-  
-  if (!BOT_TOKEN || !CHAT_ID) {
-    console.error('Missing environment variables:', { 
-      hasBotToken: !!BOT_TOKEN, 
-      hasChatId: !!CHAT_ID 
-    });
-    return NextResponse.json(
-      { error: 'Server configuration error' },
-      { status: 500 }
-    );
-  }
-
   try {
     const data = await req.json();
     console.log('Received data:', data);
@@ -31,18 +15,23 @@ export async function POST(req: Request) {
       );
     }
 
-    const text = `
-🔔 Nowa wiadomość ze strony:
+    const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
+    const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
-👤 Imię: ${name}
-📧 Email: ${email}
-📱 Telefon: ${phone}
-💬 Wiadomość: ${message}
-    `;
+    if (!BOT_TOKEN || !CHAT_ID) {
+      console.error('Missing environment variables:', { 
+        hasBotToken: !!BOT_TOKEN, 
+        hasChatId: !!CHAT_ID 
+      });
+      return NextResponse.json(
+        { error: 'Server configuration error' },
+        { status: 500 }
+      );
+    }
 
-    console.log('Sending to Telegram:', { text });
-    
-    const telegramResponse = await fetch(
+    console.log('Sending to Telegram:', { text: message });
+
+    const response = await fetch(
       `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
       {
         method: 'POST',
@@ -51,66 +40,33 @@ export async function POST(req: Request) {
         },
         body: JSON.stringify({
           chat_id: CHAT_ID,
-          text,
+          text: `
+            New message from: ${name}
+            Email: ${email}
+            Phone: ${phone}
+            Message: ${message}
+          `,
         }),
       }
     );
 
-    if (!telegramResponse.ok) {
-      const errorData = await telegramResponse.json();
-      console.error('Telegram API error:', errorData);
+    const result = await response.json();
+    console.log('Telegram API success:', result);
+
+    if (!response.ok) {
+      console.error('Telegram API error:', result);
       return NextResponse.json(
-        { error: 'Failed to send message to Telegram', details: errorData },
+        { error: 'Failed to send message to Telegram' },
         { status: 500 }
       );
     }
 
-    const result = await telegramResponse.json();
-    console.log('Telegram API success:', result);
-    
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Message sent successfully',
-      result 
-    });
+    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error processing request:', error);
+    console.error('Error in send-telegram route:', error);
     return NextResponse.json(
-      { error: 'Internal server error', details: error },
+      { error: 'Internal server error' },
       { status: 500 }
     );
   }
-}
-
-// Explicitly handle other HTTP methods
-export async function GET(req: Request) {
-  console.log('GET method called');
-  return NextResponse.json(
-    { error: 'Method not allowed. Use POST instead.' },
-    { status: 405 }
-  );
-}
-
-export async function PUT(req: Request) {
-  console.log('PUT method called');
-  return NextResponse.json(
-    { error: 'Method not allowed. Use POST instead.' },
-    { status: 405 }
-  );
-}
-
-export async function DELETE(req: Request) {
-  console.log('DELETE method called');
-  return NextResponse.json(
-    { error: 'Method not allowed. Use POST instead.' },
-    { status: 405 }
-  );
-}
-
-export async function PATCH(req: Request) {
-  console.log('PATCH method called');
-  return NextResponse.json(
-    { error: 'Method not allowed. Use POST instead.' },
-    { status: 405 }
-  );
 }
