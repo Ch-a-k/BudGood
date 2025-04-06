@@ -6,7 +6,12 @@ import emailjs from '@emailjs/browser';
 function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isEmailSent, setIsEmailSent] = useState(false);
+  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const { register, handleSubmit, reset, formState: { errors } } = useForm();
+
+  const handleMouseMove = (e: React.MouseEvent) => {
+    setTooltipPosition({ x: e.clientX, y: e.clientY });
+  };
 
   const onSubmit = async (data: any) => {
     try {
@@ -52,7 +57,7 @@ function App() {
                 <a
                   key={item.name}
                   href={item.href}
-                  className="text-gray-700 hover:text-primary transition-colors"
+                  className="font-bold text-gray-700 hover:text-primary hover:underline hover:underline-offset-8 hover:font-bold transition-colors"
                 >
                   {item.name}
                 </a>
@@ -228,17 +233,31 @@ function App() {
                 description: "Adaptacja przestrzeni biurowej 150m²"
               }
             ].map((project, index) => (
-              <div key={index} className="bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow">
+              <a 
+                href="#kontakt" 
+                key={index}
+                onMouseMove={handleMouseMove}
+                className="group relative block bg-white rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow cursor-pointer"
+              >
                 <img
                   src={project.image}
                   alt={project.title}
                   className="w-full h-48 object-cover"
                 />
+                <div 
+                  className="opacity-0 group-hover:opacity-100 transition-opacity fixed pointer-events-none z-50 bg-primary text-white px-4 py-2 rounded-lg whitespace-nowrap"
+                  style={{ 
+                    left: `${tooltipPosition.x + 10}px`, 
+                    top: `${tooltipPosition.y + 10}px` 
+                  }}
+                >
+                  Darmowa wycena
+                </div>
                 <div className="p-4">
                   <h3 className="text-xl font-semibold mb-2">{project.title}</h3>
                   <p className="text-gray-600">{project.description}</p>
                 </div>
-              </div>
+              </a>
             ))}
           </div>
         </div>
@@ -339,7 +358,7 @@ function App() {
                   <input
                     type="text"
                     {...register('name', { required: true })}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm"
                   />
                   {errors.name && <span className="text-red-500 text-sm">To pole jest wymagane</span>}
                 </div>
@@ -348,7 +367,7 @@ function App() {
                   <input
                     type="email"
                     {...register('email', { required: true, pattern: /^\S+@\S+$/i })}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring-primary"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm "
                   />
                   {errors.email && <span className="text-red-500 text-sm">Wprowadź poprawny adres email</span>}
                 </div>
@@ -410,11 +429,11 @@ function App() {
               <div className="space-y-2">
                 <p className="flex items-center">
                   <Phone className="w-5 h-5 mr-2" />
-                  <a href="tel:+48222900004" className="hover:text-[#072623] transition-colors">+ 48 222 900 004</a>
+                  <a href="tel:+48222900004" className="hover:underline hover:underline-offset-8 transition-colors">+ 48 222 900 004</a>
                 </p>
                 <p className="flex items-center">
                   <Mail className="w-5 h-5 mr-2" />
-                  <a href="mailto:info@polerowanie-szyb.pl" className="hover:text-[#072623] transition-colors">info@polerowanie-szyb.pl</a>
+                  <a href="mailto:info@budgood.pl" className="hover:underline hover:underline-offset-8 transition-colors">info@budgood.pl</a>
                 </p>
               </div>
             </div>
